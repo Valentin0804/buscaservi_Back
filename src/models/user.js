@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const entitySchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     mail: { type: String, required: true},
     password: { type: String, required: true},
@@ -10,4 +10,4 @@ const entitySchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('entity', entitySchema);
+module.exports = mongoose.model('user', userSchema);

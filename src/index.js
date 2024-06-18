@@ -12,34 +12,35 @@ mongoose.connect(dbConfig.url, dbConfig.options)
     .then(() => console.log('Conectado a la base de datos'))
     .catch(err => console.error(err));
 
+
 // Create
-app.post('/entities', async (req, res) => {
+app.post('/user', async (req, res) => {
   try {
-    const newEntity = new Entity(req.body);
-    await newEntity.save();
-    res.status(201).json(newEntity);
+    const newUser = new user(req.body);
+    await newUser.save();
+    res.status(201).json(newUser);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
 // Delete
-app.delete('/entities/:id', getEntity, async (req, res) => {
+app.delete('/user/:id', getUser, async (req, res) => {
   try {
-    await res.entity.remove();
-    res.json({ message: 'Entity deleted' });
+    await res.user.remove();
+    res.json({ message: 'user deleted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-async function getEntity(req, res, next) {
+async function getUser(req, res, next) {
   try {
-    const entity = await Entity.findById(req.params.id);
-    if (entity == null) {
-      return res.status(404).json({ message: 'Entity not found' });
+    const user = await User.findById(req.params.id);
+    if (user == null) {
+      return res.status(404).json({ message: 'user not found' });
     }
-    res.entity = entity;
+    res.user = user;
     next();
   } catch (err) {
     return res.status(500).json({ message: err.message });
