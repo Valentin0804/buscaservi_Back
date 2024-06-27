@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createUser, getAllUsers, getUserById, updateUser, deleteUser } = require('../models/user');
 const { getAllPrestadores, getPrestadorById, createPrestador, updatePrestador } = require('../models/prestador');
+const { createServiceRequest,getAllserviceRequests, getserviceRequestById, updateserviceRequest, deleteserviceRequest } = require('../models/serviceRequest');
 
 // Obtener todos los usuarios
 router.get('/', async (req, res) => {
@@ -64,30 +65,30 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// Obtener todos los prestadores
+// Obtener todos los Prestadores
 router.get('/', async (req, res) => {
     try {
-        const prestadores = await getAllPrestadores();
-        res.json(prestadores);
+        const Prestadores = await getAllPrestadores();
+        res.json(Prestadores);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Obtener un prestador por su ID
+// Obtener un Prestador por su ID
 router.get('/:id', async (req, res) => {
     try {
-        const prestador = await getPrestadorById(req.params.id);
-        if (!prestador) {
+        const Prestador = await getPrestadorById(req.params.id);
+        if (!Prestador) {
             return res.status(404).json({ error: 'Prestador not found' });
         }
-        res.json(prestador);
+        res.json(Prestador);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-// Crear un nuevo prestador
+// Crear un nuevo Prestador
 router.post('/', async (req, res) => {
     const newPrestador = req.body;
     try {
@@ -98,11 +99,11 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Actualizar un prestador por su ID
+// Actualizar un Prestador por su ID
 router.put('/:id', async (req, res) => {
-    const prestador = req.body;
+    const Prestador = req.body;
     try {
-        const results = await updatePrestador(req.params.id, prestador);
+        const results = await updatePrestador(req.params.id, Prestador);
         if (results.affectedRows === 0) {
             return res.status(404).json({ error: 'Prestador not found' });
         }
@@ -112,7 +113,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Eliminar un prestador por su ID
+// Eliminar un Prestador por su ID
 router.delete('/:id', async (req, res) => {
     try {
         const results = await deletePrestador(req.params.id);
@@ -120,6 +121,67 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Prestador not found' });
         }
         res.json({ message: 'Prestador deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Obtener todas las solicitudes de servicio
+router.get('/', async (req, res) => {
+    try {
+        const serviceRequest = await getAllserviceRequests();
+        res.json(serviceRequest);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Obtener una solicitud de servicio por su ID
+router.get('/:id', async (req, res) => {
+    try {
+        const serviceRequest = await getserviceRequestById(req.params.id);
+        if (!serviceRequest) {
+            return res.status(404).json({ error: 'service request not found' });
+        }
+        res.json(serviceRequest);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Crear una nueva solicitud de servicio
+router.post('/', async (req, res) => {
+    const newServiceRequest = req.body;
+    try {
+        const results = await createServiceRequest(newServiceRequest);
+        res.status(201).json({ id: results.insertId });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Actualizar una solicitud de servicio por su ID
+router.put('/:id', async (req, res) => {
+    const serviceRequest = req.body;
+    try {
+        const results = await updateserviceRequest(req.params.id, user);
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Service request not found' });
+        }
+        res.json({ message: 'Service request updated successfully' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Eliminar una solicitud de servicio por su ID
+router.delete('/:id', async (req, res) => {
+    try {
+        const results = await deleteserviceRequest(req.params.id);
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Service Request not found' });
+        }
+        res.json({ message: 'Service Request deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
