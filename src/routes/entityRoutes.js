@@ -1,21 +1,16 @@
 const express = require('express');
-const router = express.Router();
+const app = express.Router();
 const { createUser, getAllUsers, getUserById, updateUser, deleteUser } = require('../models/user');
 const { getAllPrestadores, getPrestadorById, createPrestador, updatePrestador } = require('../models/prestador');
 const { createServiceRequest,getAllserviceRequests, getserviceRequestById, updateserviceRequest, deleteserviceRequest } = require('../models/serviceRequest');
 
 // Obtener todos los usuarios
-router.get('/', async (req, res) => {
-    try {
-        const users = await getAllUsers();
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+app.get('/', (req, res) => {
+    res.send('peticion get');
 });
 
 // Obtener un usuario por su ID
-router.get('/:id', async (req, res) => {
+app.get('/:id', async (req, res) => {
     try {
         const user = await getUserById(req.params.id);
         if (!user) {
@@ -28,7 +23,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Crear un nuevo usuario
-router.post('/', async (req, res) => {
+app.post('/', async (req, res) => {
     const newUser = req.body;
     try {
         const results = await createUser(newUser);
@@ -38,8 +33,9 @@ router.post('/', async (req, res) => {
     }
 });
 
+
 // Actualizar un usuario por su ID
-router.put('/:id', async (req, res) => {
+app.put('/:id', async (req, res) => {
     const user = req.body;
     try {
         const results = await updateUser(req.params.id, user);
@@ -53,7 +49,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Eliminar un usuario por su ID
-router.delete('/:id', async (req, res) => {
+app.delete('/:id', async (req, res) => {
     try {
         const results = await deleteUser(req.params.id);
         if (results.affectedRows === 0) {
@@ -66,7 +62,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Obtener todos los Prestadores
-router.get('/', async (req, res) => {
+app.get('/', async (req, res) => {
     try {
         const Prestadores = await getAllPrestadores();
         res.json(Prestadores);
@@ -76,7 +72,7 @@ router.get('/', async (req, res) => {
 });
 
 // Obtener un Prestador por su ID
-router.get('/:id', async (req, res) => {
+app.get('/:id', async (req, res) => {
     try {
         const Prestador = await getPrestadorById(req.params.id);
         if (!Prestador) {
@@ -89,7 +85,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Crear un nuevo Prestador
-router.post('/', async (req, res) => {
+app.post('/', async (req, res) => {
     const newPrestador = req.body;
     try {
         const results = await createPrestador(newPrestador);
@@ -100,7 +96,7 @@ router.post('/', async (req, res) => {
 });
 
 // Actualizar un Prestador por su ID
-router.put('/:id', async (req, res) => {
+app.put('/:id', async (req, res) => {
     const Prestador = req.body;
     try {
         const results = await updatePrestador(req.params.id, Prestador);
@@ -114,7 +110,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Eliminar un Prestador por su ID
-router.delete('/:id', async (req, res) => {
+app.delete('/:id', async (req, res) => {
     try {
         const results = await deletePrestador(req.params.id);
         if (results.affectedRows === 0) {
@@ -127,7 +123,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Obtener todas las solicitudes de servicio
-router.get('/', async (req, res) => {
+app.get('/', async (req, res) => {
     try {
         const serviceRequest = await getAllserviceRequests();
         res.json(serviceRequest);
@@ -137,7 +133,7 @@ router.get('/', async (req, res) => {
 });
 
 // Obtener una solicitud de servicio por su ID
-router.get('/:id', async (req, res) => {
+app.get('/:id', async (req, res) => {
     try {
         const serviceRequest = await getserviceRequestById(req.params.id);
         if (!serviceRequest) {
@@ -150,7 +146,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Crear una nueva solicitud de servicio
-router.post('/', async (req, res) => {
+app.post('/', async (req, res) => {
     const newServiceRequest = req.body;
     try {
         const results = await createServiceRequest(newServiceRequest);
@@ -161,7 +157,7 @@ router.post('/', async (req, res) => {
 });
 
 // Actualizar una solicitud de servicio por su ID
-router.put('/:id', async (req, res) => {
+app.put('/:id', async (req, res) => {
     const serviceRequest = req.body;
     try {
         const results = await updateserviceRequest(req.params.id, user);
@@ -175,7 +171,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Eliminar una solicitud de servicio por su ID
-router.delete('/:id', async (req, res) => {
+app.delete('/:id', async (req, res) => {
     try {
         const results = await deleteserviceRequest(req.params.id);
         if (results.affectedRows === 0) {
@@ -187,4 +183,4 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = app;
