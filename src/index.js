@@ -1,25 +1,13 @@
 const express = require('express');
 const app = express();
-require('dotenv').config();
-const connection = require('./config/database')
-const { getConnection } = require('./config/database');
+const entityRoutes = require('./routes/entityRoutes'); // Ajusta la ruta según tu estructura
 
-
-// Middleware y rutas
-app.use(express.json());
-app.use('/api/users', require('./routes/entityRoutes'));
-
-(async () => {
-  try {
-    await getConnection();
-    console.log('Conexión a la base de datos exitosa.');
-  } catch (error) {
-    console.error('Error conectando a la base de datos:', error);
-    process.exit(1); // Salir del proceso si no se puede conectar a la base de datos
-  }
-})();
+app.use(express.json()); // Para manejar JSON en las solicitudes
+app.use('/api', entityRoutes); // Manejo de rutas con el prefijo /api
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
+
+

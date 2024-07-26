@@ -1,3 +1,4 @@
+const { Connection } = require('mongoose');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
@@ -21,20 +22,5 @@ const connection = mysql.createPool({
   queueLimit: 0
 });
 
-// Función para obtener una conexión
-const getConnection = async () => {
-  try {
-    const conn = await connection.getConnection();
-    console.log('Conexión a la base de datos exitosa.');
-    return conn;
-  } catch (error) {
-    console.error('Error conectando a la base de datos:', error);
-    throw error;
-  }
-};
-
 // Exportar el pool de conexiones y la función de conexión
-module.exports = {
-  connection,
-  getConnection
-};
+module.exports = connection;
