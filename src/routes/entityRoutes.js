@@ -25,8 +25,9 @@ const {
   getUserById,
   updateUser,
   deleteUser,
-  authenticateUser 
 } = require('../models/user');
+
+const{authenticateUser, hashExistingPasswords}= require('../models/auth');
 
 // Rutas para `prestador`
 router.post('/prestadores', async (req, res) => {
@@ -205,18 +206,26 @@ router.delete('/users/:id', async (req, res) => {
 // Ruta para el login
 router.post('/login', async (req, res) => {
   const { mail, password } = req.body;
-  
+
   if (!mail || !password) {
-      return res.status(400).json({ message: 'Se requieren el correo y la contraseña' });
+    return res.status(400).json({ message: 'Se requieren el correo y la contraseña' });
   }
 
   try {
-      console.log('Intentando iniciar sesión con:', mail, password);
-      const user = await authenticateUser(mail, password);  // Lógica de autenticación
-      res.status(200).json({ message: 'Inicio de sesión exitoso', user });
+    console.log('Intentando iniciar sesión con:', mail);
+
+    // Lógica de autenticación reutilizada
+    const user = await authenticateUser(mail, password);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Correo o contraseña incorrectos' });
+    }
+
+    // Retornar una respuesta exitosa
+    res.status(200).json({ message: 'Inicio de sesión exitoso', user });
   } catch (error) {
-      console.error('Error durante el inicio de sesión:', error);
-      res.status(401).json({ message: error.message });
+    console.error('Error durante el inicio de sesión:', error);
+    res.status(500).json({ message: 'Error del servidor', error: error.message });
   }
 });
 
