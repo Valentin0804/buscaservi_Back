@@ -25,4 +25,3 @@ const connection = mysql.createPool({
 // Exportar el pool de conexiones y la función de conexión
 module.exports = connection;
 
-module.exports = connection;

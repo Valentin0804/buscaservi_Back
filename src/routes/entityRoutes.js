@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createUser, getAllUsers } = require('../models/user');
+const bcrypt = require('bcrypt');
 
 // Importar los modelos
 const {
@@ -24,7 +24,8 @@ const {
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  authenticateUser 
 } = require('../models/user');
 
 // Rutas para `prestador`
@@ -200,5 +201,24 @@ router.delete('/users/:id', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Ruta para el login
+router.post('/login', async (req, res) => {
+  const { mail, password } = req.body;
+  
+  if (!mail || !password) {
+      return res.status(400).json({ message: 'Se requieren el correo y la contraseña' });
+  }
+
+  try {
+      console.log('Intentando iniciar sesión con:', mail, password);
+      const user = await authenticateUser(mail, password);  // Lógica de autenticación
+      res.status(200).json({ message: 'Inicio de sesión exitoso', user });
+  } catch (error) {
+      console.error('Error durante el inicio de sesión:', error);
+      res.status(401).json({ message: error.message });
+  }
+});
+
 
 module.exports = router;
