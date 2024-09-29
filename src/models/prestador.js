@@ -41,6 +41,19 @@ const getPrestadorById = async (id) => {
     }
 };
 
+// Obtener prestadores por servicio
+const getPrestadoresByService = async (service) => {
+    const query = 'SELECT * FROM prestadores WHERE service = ?'; // Asegúrate de que la columna de la base de datos se llama "service"
+    
+    try {
+        const [results] = await connection.execute(query, [service]);
+        return results;
+    } catch (err) {
+        console.error('Error fetching prestadores by service:', err);
+        throw err;
+    }
+};
+
 // Actualizar un prestador por su ID
 const updatePrestador = async (id, user) => {
     const { name, mail, password, birthdate, phone, address, service } = prestador;
@@ -74,5 +87,6 @@ module.exports = {
     getAllPrestadores,
     getPrestadorById,
     updatePrestador,
-    deletePrestador
+    deletePrestador,
+    getPrestadoresByService
 };

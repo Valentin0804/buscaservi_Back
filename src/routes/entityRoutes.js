@@ -8,7 +8,8 @@ const {
   getAllPrestadores,
   getPrestadorById,
   updatePrestador,
-  deletePrestador
+  deletePrestador,
+  getPrestadoresByService
 } = require('../models/prestador');
 
 const {
@@ -55,6 +56,20 @@ router.get('/prestadores/:id', async (req, res) => {
       res.status(200).json(prestador);
     } else {
       res.status(404).json({ error: 'Prestador no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ruta para obtener prestadores por servicio
+router.get('/prestadores/:service', async (req, res) => {
+  try {
+    const prestadores = await getPrestadoresByService(req.params.service); // Llama a la función para obtener prestadores filtrados
+    if (prestadores.length > 0) {
+      res.status(200).json(prestadores); // Devuelve los prestadores encontrados
+    } else {
+      res.status(404).json({ error: 'No se encontraron prestadores para este servicio' });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
