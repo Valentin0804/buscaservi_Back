@@ -7,26 +7,33 @@ const authenticateUser = async (mail, password) => {
     
     try {
         // Intentar autenticarse como usuario
+        console.log('Buscando usuario con correo:', mail)
         let [results] = await connection.execute(userQuery, [mail]);
         let user = results[0];
+        console.log('Resultado de búsqueda de usuario:', user)
 
         // Si no hay un usuario, intentar como prestador
         if (!user) {
-            [results] = await connection.execute(providerQuery, [mail]);
-            user = results[0];
+          console.log('No se encontró usuario, buscando como prestador...');
+          [results] = await connection.execute(providerQuery, [mail]);
+          user = results[0];
+          console.log('Resultado de búsqueda de prestador:', user);
         }
 
         // Si aún no se encuentra el usuario, lanzar un error
         if (!user) {
-            throw new Error('Credenciales incorrectas');
+          console.log('No se encontraron credenciales válidas.');
+          throw new Error('Credenciales incorrectas');
         }
 
         // Comparar la contraseña proporcionada con la almacenada
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            throw new Error('Credenciales incorrectas');
+          console.log('Contraseña incorrecta.');
+          throw new Error('Credenciales incorrectas');
         }
 
+        console.log('Usuario autenticado con éxito:', user);
         return user; // Devolver el usuario autenticado
     } catch (err) {
         console.error('Error authenticating user:', err);

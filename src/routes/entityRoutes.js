@@ -233,6 +233,7 @@ router.post('/login', async (req, res) => {
     const user = await authenticateUser(mail, password);
 
     if (!user) {
+      console.log('Credenciales inválidas');
       return res.status(401).json({ message: 'Correo o contraseña incorrectos' });
     }
 
