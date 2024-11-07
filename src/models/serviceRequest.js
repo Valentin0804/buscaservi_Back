@@ -1,3 +1,4 @@
+//Solicitudes de servicio
 const connection = require('../config/database');
 
 // Crear una nueva solicitud de servicio

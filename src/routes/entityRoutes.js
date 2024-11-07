@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
 
 // Importar los modelos
 const {
@@ -21,6 +20,21 @@ const {
 } = require('../models/serviceRequest');
 
 const {
+  createBudgets,
+  getBudgetById,
+  updateBudget,
+  deleteBudget,
+  getBudgetsByPrestador
+} = require('../models/budgets');
+
+const {
+  createDating,
+  getDatingById,
+  updateDating,
+  deleteDating
+} = require('../models/dating')
+
+const {
   createUser,
   getAllUsers,
   getUserById,
@@ -28,8 +42,9 @@ const {
   deleteUser,
 } = require('../models/user');
 
-const{authenticateUser, hashExistingPasswords}= require('../models/auth');
+const{authenticateUser}= require('../models/auth');
 
+//----------------------------------------------------------------------------------------------------------//
 // Rutas para `prestador`
 router.post('/prestadores', async (req, res) => {
   try {
@@ -102,6 +117,7 @@ router.delete('/prestadores/:id', async (req, res) => {
   }
 });
 
+//----------------------------------------------------------------------------------------------------------//
 // Rutas para `serviceRequest`
 router.post('/service-requests', async (req, res) => {
   try {
@@ -160,6 +176,7 @@ router.delete('/service-requests/:id', async (req, res) => {
   }
 });
 
+//----------------------------------------------------------------------------------------------------------//
 // Rutas para `user`
 router.post('/users', async (req, res) => {
   try {
@@ -218,6 +235,121 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
+//----------------------------------------------------------------------------------------------------------//
+// Rutas para 'Budgets'
+router.post('/budget', async (req, res) => {
+  try {
+    const id = await createBudgets(req.body);
+    res.status(201).json({ id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/budget/:id', async (req, res) => {
+  try {
+    const user = await getBudgetById(req.params.id);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ error: 'Presupuesto no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/budget/:id', async (req, res) => {
+  try {
+    const affectedRows = await updateBudget(req.params.id, req.body);
+    if (affectedRows > 0) {
+      res.status(200).json({ message: 'Presupuesto actualizado' });
+    } else {
+      res.status(404).json({ error: 'Presupuesto no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/budget/:id', async (req, res) => {
+  try {
+    const affectedRows = await deleteBudget(req.params.id);
+    if (affectedRows > 0) {
+      res.status(200).json({ message: 'Presupuesto eliminado' });
+    } else {
+      res.status(404).json({ error: 'Presupuesto no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/budget/:prestador', async (req, res) => {
+  try {
+    const budgets = await getBudgetsByPrestador(req.params.prestador); // Llama a la función para obtener prestadores filtrados
+    if (budgets.length > 0) {
+      res.status(200).json(budgets); // Devuelve los prestadores encontrados
+    } else {
+      res.status(404).json({ error: 'No se encontraron Presupuestos para este prestador' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//----------------------------------------------------------------------------------------------------------//
+// Rutas para 'Dating'
+router.post('/dating', async (req, res) => {
+  try {
+    const id = await createDating(req.body);
+    res.status(201).json({ id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/dating/:id', async (req, res) => {
+  try {
+    const user = await getDatingById(req.params.id);
+    if (user) {
+      res.status(200).json(user);
+    } else {
+      res.status(404).json({ error: 'Cita no encontrada' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/dating/:id', async (req, res) => {
+  try {
+    const affectedRows = await updateDating(req.params.id, req.body);
+    if (affectedRows > 0) {
+      res.status(200).json({ message: 'Cita actualizada' });
+    } else {
+      res.status(404).json({ error: 'Cita no encontrada' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/dating/:id', async (req, res) => {
+  try {
+    const affectedRows = await deleteDating(req.params.id);
+    if (affectedRows > 0) {
+      res.status(200).json({ message: 'Cita eliminada' });
+    } else {
+      res.status(404).json({ error: 'Cita no encontrada' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//----------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------//
 // Ruta para el login
 router.post('/login', async (req, res) => {
   const { mail, password } = req.body;
@@ -244,6 +376,7 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Error del servidor', error: error.message });
   }
 });
-
+//----------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------//
 
 module.exports = router;

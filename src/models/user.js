@@ -1,5 +1,5 @@
+//Usuario
 const connection = require('../config/database');
-const bcrypt = require('bcrypt');
 
 // Crear un nuevo usuario
 const createUser = async (user) => {
