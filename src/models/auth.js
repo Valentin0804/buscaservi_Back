@@ -1,5 +1,6 @@
 const connection = require('../config/database');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const authenticateUser = async (mail, password) => {
     const userQuery = 'SELECT * FROM users WHERE mail = ?';
@@ -34,12 +35,29 @@ const authenticateUser = async (mail, password) => {
         }
 
         console.log('Usuario autenticado con éxito:', user);
-        return user; // Devolver el usuario autenticado
+        //Generar el token
+        /*const token = jwt.sign(
+          { id: user.id, mail: user.mail }, 
+          process.env.JWT_SECRET,  
+          { expiresIn: '1h' }  // Opcional, para ajustar el tiempo de expiracion
+      );*/
+        return {user/*,token*/}; // Devolver el usuario autenticado y el token
     } catch (err) {
         console.error('Error authenticating user:', err);
         throw err;
     }
 };
+// Función para realizar login
+/*const login = async (req, res) => {
+  const { mail, password } = req.body;
+
+  try {
+      const { user, token } = await authenticateUser(mail, password);
+      res.json({ user, token });  // Devolver los datos del usuario y el token
+  } catch (err) {
+      res.status(401).send('Credenciales incorrectas');
+  }
+};*/
 
 const hashExistingPasswords = async () => {
     try {
@@ -78,6 +96,7 @@ const hashExistingPasswords = async () => {
       console.error('Error actualizando contraseñas:', error);
     }
   };
+
   
   hashExistingPasswords();
   

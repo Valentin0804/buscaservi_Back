@@ -42,6 +42,14 @@ const {
   deleteUser,
 } = require('../models/user');
 
+const {
+  createService,
+  getAllServices,
+  getServiceById,
+  updateService,
+  deleteService
+} = require('../models/service');
+
 const{authenticateUser}= require('../models/auth');
 
 //----------------------------------------------------------------------------------------------------------//
@@ -378,5 +386,64 @@ router.post('/login', async (req, res) => {
 });
 //----------------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------------//
+// Rutas para `services`
+router.post('/services', async (req, res) => {
+  try {
+    const id = await createService(req.body);
+    res.status(201).json({ id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/services', async (req, res) => {
+  try {
+    const services = await getAllServices();
+    res.status(200).json(services);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/services/:id', async (req, res) => {
+  try {
+    const service = await getServiceById(req.params.id);
+    if (service) {
+      res.status(200).json(service);
+    } else {
+      res.status(404).json({ error: 'Servicio no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put('/services/:id', async (req, res) => {
+  try {
+    const affectedRows = await updateService(req.params.id, req.body);
+    if (affectedRows > 0) {
+      res.status(200).json({ message: 'Servicio actualizado' });
+    } else {
+      res.status(404).json({ error: 'Servicio no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete('/services/:id', async (req, res) => {
+  try {
+    const affectedRows = await deleteService(req.params.id);
+    if (affectedRows > 0) {
+      res.status(200).json({ message: 'Servicio eliminado' });
+    } else {
+      res.status(404).json({ error: 'Servicio no encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+//------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------------------------------------------------------------//
 
 module.exports = router;
