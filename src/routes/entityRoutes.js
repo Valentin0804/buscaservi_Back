@@ -129,9 +129,27 @@ router.delete('/prestadores/:id', async (req, res) => {
 // Rutas para `serviceRequest`
 router.post('/service-requests', async (req, res) => {
   try {
-    const id = await createServiceRequest(req.body);
-    res.status(201).json({ id });
+    const { date, hour, description, state, idService, idPrestador, idUser } = req.body;
+
+    // Validación básica de los datos
+    if (!date || !hour || !description || !idService || !idPrestador || !idUser) {
+      return res.status(400).json({ error: 'Todos los campos son obligatorios.' });
+    }
+
+    // Llamada a la función para crear la solicitud de servicio
+    const id = await createServiceRequest({
+      date,
+      hour,
+      description,
+      state,
+      idService,
+      idPrestador,
+      idUser
+    });
+
+    res.status(201).json({ id, message: 'Presupuesto solicitado con éxito.' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 });
