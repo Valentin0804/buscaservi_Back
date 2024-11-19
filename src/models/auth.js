@@ -1,63 +1,48 @@
 const connection = require('../config/database');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 const authenticateUser = async (mail, password) => {
-    const userQuery = 'SELECT * FROM users WHERE mail = ?';
-    const providerQuery = 'SELECT * FROM prestadores WHERE mail = ?';
-    
-    try {
-        // Intentar autenticarse como usuario
-        console.log('Buscando usuario con correo:', mail)
-        let [results] = await connection.execute(userQuery, [mail]);
-        let user = results[0];
-        console.log('Resultado de búsqueda de usuario:', user)
+  const userQuery = 'SELECT * FROM users WHERE mail = ?';
+  const providerQuery = 'SELECT * FROM prestadores WHERE mail = ?';
+  
+  try {
+      // Intentar autenticarse como usuario
+      let [results] = await connection.execute(userQuery, [mail]);
+      let user = results[0];
 
-        // Si no hay un usuario, intentar como prestador
-        if (!user) {
-          console.log('No se encontró usuario, buscando como prestador...');
+      // Si no hay un usuario, intentar como prestador
+      if (!user) {
           [results] = await connection.execute(providerQuery, [mail]);
           user = results[0];
-          console.log('Resultado de búsqueda de prestador:', user);
-        }
+      }
 
-        // Si aún no se encuentra el usuario, lanzar un error
-        if (!user) {
-          console.log('No se encontraron credenciales válidas.');
+      // Si aún no se encuentra el usuario, lanzar un error
+      if (!user) {
           throw new Error('Credenciales incorrectas');
-        }
+      }
 
-        // Comparar la contraseña proporcionada con la almacenada
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-          console.log('Contraseña incorrecta.');
+      // Comparar la contraseña proporcionada con la almacenada
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
           throw new Error('Credenciales incorrectas');
-        }
+      }
 
-        console.log('Usuario autenticado con éxito:', user);
-        //Generar el token
-        /*const token = jwt.sign(
-          { id: user.id, mail: user.mail }, 
-          process.env.JWT_SECRET,  
-          { expiresIn: '1h' }  // Opcional, para ajustar el tiempo de expiracion
-      );*/
-        return {user/*,token*/}; // Devolver el usuario autenticado y el token
-    } catch (err) {
-        console.error('Error authenticating user:', err);
-        throw err;
-    }
-};
-// Función para realizar login
-/*const login = async (req, res) => {
-  const { mail, password } = req.body;
+      // Devolver el usuario autenticado incluyendo el tipo
+      return {
+          name: user.name,
+          mail: user.mail,
+          phone: user.phone, // Asegúrate de que este campo esté en la tabla de usuarios/prestadores
+          address: user.address,
+          service: user.service || null, // Devolver el servicio si existe
+          type: user.service ? 'prestador' : 'usuario' // Establecer el tipo
+      };
 
-  try {
-      const { user, token } = await authenticateUser(mail, password);
-      res.json({ user, token });  // Devolver los datos del usuario y el token
   } catch (err) {
-      res.status(401).send('Credenciales incorrectas');
+      console.error('Error authenticating user:', err);
+      throw err;
   }
-};*/
+};
+
 
 const hashExistingPasswords = async () => {
     try {
